@@ -1,13 +1,11 @@
 package xyz.brandonfl.javafiredeamonfusionapi;
 
-import org.jetbrains.annotations.NotNull;
-
 final class ApiUtils {
 
   private ApiUtils() {
   }
 
-  protected static String cleanApiUrl(@NotNull String url) {
+  protected static String cleanApiUrl(String url) {
     return url.replaceFirst("/*$", "");
   }
 }
