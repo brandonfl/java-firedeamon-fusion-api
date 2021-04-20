@@ -1,4 +1,4 @@
-package xyz.brandonfl.javafiredeamonfusionapi.DTO;
+package xyz.brandonfl.firedeamon.fusion.api.DTO;
 
 import java.util.List;
 

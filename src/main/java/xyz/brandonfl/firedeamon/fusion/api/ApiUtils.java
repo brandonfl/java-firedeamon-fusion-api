@@ -1,4 +1,4 @@
-package xyz.brandonfl.javafiredeamonfusionapi;
+package xyz.brandonfl.firedeamon.fusion.api;
 
 final class ApiUtils {
 

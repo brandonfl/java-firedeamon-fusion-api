@@ -1,4 +1,4 @@
-package xyz.brandonfl.javafiredeamonfusionapi;
+package xyz.brandonfl.firedeamon.fusion.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -10,8 +10,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import xyz.brandonfl.javafiredeamonfusionapi.DTO.ServiceInformation;
-import xyz.brandonfl.javafiredeamonfusionapi.DTO.Services;
+import xyz.brandonfl.firedeamon.fusion.api.DTO.Services;
+import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceInformation;
 
 public class FiredeamonFusionApi {
 
@@ -24,7 +24,7 @@ public class FiredeamonFusionApi {
     this.username = username;
     this.password = password;
   }
-
+  
   public String login() {
     try {
       JsonObject connect = new JsonObject();
