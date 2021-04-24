@@ -73,7 +73,7 @@ class Session implements AutoCloseable {
         throw new AuthenticationException();
       }
     } catch (IOException ioException) {
-      return null;
+      throw new AuthenticationException();
     }
   }
 
