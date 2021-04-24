@@ -9,7 +9,7 @@
   <version>6.0.0</version>
 
   <name>Java Firedeamon Fusion API</name>
-  <description>Java client to use Firedeamon Fusion API</description>
+  <description>FireDeamon Fusion API for Java</description>
   <url>https://github.com/brandonfl/java-firedeamon-fusion-api</url>
 
   <licenses>
@@ -147,19 +147,6 @@
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
       <version>4.9.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
