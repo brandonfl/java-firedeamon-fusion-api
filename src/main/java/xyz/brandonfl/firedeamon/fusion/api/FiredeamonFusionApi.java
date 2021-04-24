@@ -3,6 +3,7 @@ package xyz.brandonfl.firedeamon.fusion.api;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.MediaType;
@@ -10,6 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceAction;
 import xyz.brandonfl.firedeamon.fusion.api.DTO.Services;
 import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceInformation;
 
@@ -102,5 +104,32 @@ public class FiredeamonFusionApi {
                 && serviceInformation.service.name != null
                 && serviceInformation.service.name.equals(serviceName))
         .findFirst().orElse(null);
+  }
+
+  public void updateServiceStatus(String serviceName, ServiceAction serviceAction) {
+    String jSessionId = login();
+    if (jSessionId != null) {
+      try {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+            .build();
+
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
+        RequestBody body = RequestBody.create(mediaType,
+            MessageFormat.format("svcname={0}&action={1}", serviceName, serviceAction.getToken()));
+
+        System.out.println(body.toString());
+        Request request = new Request.Builder()
+            .url(url + "/api/v1/services.control")
+            .header("Cookie", jSessionId)
+            .method("POST", body)
+            .build();
+        Response response = client.newCall(request).execute();
+
+        System.out.println(response.code());
+      } catch (Exception exception) {
+      }
+
+      logout(jSessionId);
+    }
   }
 }
