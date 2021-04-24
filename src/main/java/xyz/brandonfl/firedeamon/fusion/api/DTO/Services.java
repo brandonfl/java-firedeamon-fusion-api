@@ -26,6 +26,11 @@ package xyz.brandonfl.firedeamon.fusion.api.DTO;
 
 import java.util.List;
 
-public class Services{
+/**
+ * List of {@link ServiceInformation}
+ *
+ * @author brandonfontany-legall
+ */
+public class Services {
   public List<ServiceInformation> data;
 }

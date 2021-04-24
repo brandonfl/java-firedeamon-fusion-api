@@ -6,7 +6,7 @@
 
   <groupId>xyz.brandonfl</groupId>
   <artifactId>java-firedeamon-fusion-api</artifactId>
-  <version>1.0.0</version>
+  <version>6.0.0</version>
 
   <name>Java Firedeamon Fusion API</name>
   <description>Java client to use Firedeamon Fusion API</description>

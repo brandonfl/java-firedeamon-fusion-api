@@ -24,6 +24,11 @@
 
 package xyz.brandonfl.firedeamon.fusion.api.exception;
 
+/**
+ * Credentials supplied are invalid or otherwise fails to authenticate the user to the provided service
+ *
+ * @author brandon fontany-legall
+ */
 public class AuthenticationException extends Exception {
 
   public AuthenticationException() {

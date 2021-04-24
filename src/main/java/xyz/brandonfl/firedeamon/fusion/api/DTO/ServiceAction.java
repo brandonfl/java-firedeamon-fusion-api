@@ -24,6 +24,16 @@
 
 package xyz.brandonfl.firedeamon.fusion.api.DTO;
 
+/**
+ * Service actions to perform into a service. We can :
+ * <ul>
+ *   <li>Start the service with {@link ServiceAction#START}</li>
+ *   <li>Restart the service with {@link ServiceAction#RESTART}</li>
+ *   <li>Stop the service with {@link ServiceAction#STOP}</li>
+ * </ul>
+ *
+ * @author brandon fontany-legall
+ */
 public enum ServiceAction {
   START("start"),
   RESTART("restart"),

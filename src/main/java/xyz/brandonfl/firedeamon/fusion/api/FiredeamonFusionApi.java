@@ -41,18 +41,39 @@ import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceInformation;
 import xyz.brandonfl.firedeamon.fusion.api.exception.ApiException;
 import xyz.brandonfl.firedeamon.fusion.api.exception.AuthenticationException;
 
+/**
+ * Firedeamon Fusion API for Java.
+ *
+ * @author brandon fontany-legall
+ */
 public class FiredeamonFusionApi {
 
   protected final String url;
   protected final String username;
   protected final String password;
 
+  /**
+   * Open a new connection with a FireDaemon Fusion instance
+   * @param url url of the FireDaemon Fusion instance. For example https://localhost:20604
+   * @param username the name of the FireDaemon user
+   * @param password the password for the FireDaemon user
+   *
+   * @since 6.0.0
+   */
   public FiredeamonFusionApi(String url, String username, String password) {
     this.url = ApiUtils.cleanApiUrl(url);
     this.username = username;
     this.password = password;
   }
-  
+
+  /**
+   * Fetch FireDaemon services
+   * @return List of {@link ServiceInformation}
+   * @throws AuthenticationException In case of authentication exception
+   * @throws ApiException If the api return an error
+   *
+   * @since 6.0.0
+   */
   public List<ServiceInformation> getServices() throws AuthenticationException, ApiException {
     try (Session session = new Session(this)) {
       OkHttpClient client = new OkHttpClient().newBuilder()
@@ -74,15 +95,39 @@ public class FiredeamonFusionApi {
     }
   }
 
+  /**
+   * Fetch information of a specific service
+   * @param serviceName service name as {@link String}
+   * @return {@link ServiceInformation} of the service
+   * @throws AuthenticationException In case of authentication exception
+   * @throws ApiException If the api return an error
+   *
+   * @since 6.0.0
+   */
   public ServiceInformation getService(String serviceName) throws AuthenticationException, ApiException {
     return getServices().stream()
         .filter(serviceInformation ->
-            serviceInformation.service != null
-                && serviceInformation.service.name != null
-                && serviceInformation.service.name.equals(serviceName))
+            serviceInformation.getService() != null
+                && serviceInformation.getService().getName() != null
+                && serviceInformation.getService().getName().equals(serviceName))
         .findFirst().orElse(null);
   }
 
+  /**
+   * Update the status of a specific service. We can :
+   * <ul>
+   *   <li>Start the service with {@link ServiceAction#START}</li>
+   *   <li>Restart the service with {@link ServiceAction#RESTART}</li>
+   *   <li>Stop the service with {@link ServiceAction#STOP}</li>
+   * </ul>
+   *
+   * @param serviceName service name as {@link String}
+   * @param serviceAction the {@link ServiceAction} to perform on the service
+   * @throws AuthenticationException In case of authentication exception
+   * @throws ApiException If the api return an error
+   *
+   * @since 6.0.0
+   */
   public void updateServiceStatus(String serviceName, ServiceAction serviceAction) throws AuthenticationException, ApiException {
     try (Session session = new Session(this)) {
       OkHttpClient client = new OkHttpClient().newBuilder()

@@ -26,6 +26,11 @@ package xyz.brandonfl.firedeamon.fusion.api.exception;
 
 import okhttp3.Response;
 
+/**
+ * In case of error returned during execution. For more information about the error, use {@link Exception#getMessage()}
+ *
+ * @author brandon fontany-legall
+ */
 public class ApiException extends Exception {
 
   public ApiException(String message) {
