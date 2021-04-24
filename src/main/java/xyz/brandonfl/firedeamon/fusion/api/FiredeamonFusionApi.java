@@ -1,8 +1,8 @@
 package xyz.brandonfl.firedeamon.fusion.api;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,14 @@ import okhttp3.Response;
 import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceAction;
 import xyz.brandonfl.firedeamon.fusion.api.DTO.Services;
 import xyz.brandonfl.firedeamon.fusion.api.DTO.ServiceInformation;
+import xyz.brandonfl.firedeamon.fusion.api.exception.ApiException;
+import xyz.brandonfl.firedeamon.fusion.api.exception.AuthenticationException;
 
 public class FiredeamonFusionApi {
 
-  private final String url;
-  private final String username;
-  private final String password;
+  protected final String url;
+  protected final String username;
+  protected final String password;
 
   public FiredeamonFusionApi(String url, String username, String password) {
     this.url = ApiUtils.cleanApiUrl(url);
@@ -27,77 +29,28 @@ public class FiredeamonFusionApi {
     this.password = password;
   }
   
-  public String login() {
-    try {
-      JsonObject connect = new JsonObject();
-
-      connect.addProperty("userName", username);
-      connect.addProperty("password", password);
-
+  public List<ServiceInformation> getServices() throws AuthenticationException, ApiException {
+    try (Session session = new Session(this)) {
       OkHttpClient client = new OkHttpClient().newBuilder()
           .build();
-      MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-
-      RequestBody body = RequestBody.create(mediaType, connect.toString());
       Request request = new Request.Builder()
-          .url(url + "/auth/login")
-          .method("POST", body)
-          .addHeader("Content-Type", "application/x-www-form-urlencoded")
+          .url(url + "/api/v1/services.datatables?fd-only")
+          .header("Cookie", session.getjSessionId())
+          .method("GET", null)
           .build();
       Response response = client.newCall(request).execute();
+
       if (response.isSuccessful()) {
-        List<String> cookieList = response.headers().values("Set-Cookie");
-        return (cookieList.get(0).split(";"))[0];
+        return new Gson().fromJson(response.body().string(), Services.class).data;
       } else {
-        return null;
+        throw new ApiException(response);
       }
     } catch (IOException ioException) {
-      return null;
+      return new ArrayList<>();
     }
   }
 
-  public void logout(String jSessionId) {
-    try {
-      OkHttpClient client = new OkHttpClient().newBuilder()
-          .build();
-      MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-      RequestBody body = RequestBody.create(JSON, "{}");
-      Request request = new Request.Builder()
-          .url(url + "/auth/logout")
-          .header("Cookie", jSessionId)
-          .method("DELETE", body)
-          .build();
-      client.newCall(request).execute();
-    } catch (Exception ignored) {
-    }
-  }
-
-
-  public List<ServiceInformation> getServices() {
-    String jSessionId = login();
-    System.out.println(jSessionId);
-    if (jSessionId != null) {
-      try {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-            .build();
-        Request request = new Request.Builder()
-            .url(url + "/api/v1/services.datatables?fd-only")
-            .header("Cookie", jSessionId)
-            .method("GET", null)
-            .build();
-        Response response = client.newCall(request).execute();
-
-        return new Gson().fromJson(response.body().string(), Services.class).data;
-      } catch (Exception exception) {
-      }
-
-      logout(jSessionId);
-    }
-
-    return new ArrayList<>();
-  }
-
-  public ServiceInformation getService(String serviceName) {
+  public ServiceInformation getService(String serviceName) throws AuthenticationException, ApiException {
     return getServices().stream()
         .filter(serviceInformation ->
             serviceInformation.service != null
@@ -106,30 +59,35 @@ public class FiredeamonFusionApi {
         .findFirst().orElse(null);
   }
 
-  public void updateServiceStatus(String serviceName, ServiceAction serviceAction) {
-    String jSessionId = login();
-    if (jSessionId != null) {
-      try {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-            .build();
+  public void updateServiceStatus(String serviceName, ServiceAction serviceAction) throws AuthenticationException, ApiException {
+    try (Session session = new Session(this)) {
+      OkHttpClient client = new OkHttpClient().newBuilder()
+          .build();
 
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
-        RequestBody body = RequestBody.create(mediaType,
-            MessageFormat.format("svcname={0}&action={1}", serviceName, serviceAction.getToken()));
+      MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
+      RequestBody body = RequestBody.create(mediaType,
+          MessageFormat.format("svcname={0}&action={1}", serviceName, serviceAction.getToken()));
 
-        System.out.println(body.toString());
-        Request request = new Request.Builder()
-            .url(url + "/api/v1/services.control")
-            .header("Cookie", jSessionId)
-            .method("POST", body)
-            .build();
-        Response response = client.newCall(request).execute();
+      Request request = new Request.Builder()
+          .url(url + "/api/v1/services.control")
+          .header("Cookie", session.getjSessionId())
+          .method("POST", body)
+          .build();
 
-        System.out.println(response.code());
-      } catch (Exception exception) {
+      Response response = client.newCall(request).execute();
+
+      System.out.println(response.code());
+      System.out.println(response.isSuccessful());
+
+      if (!response.isSuccessful()) {
+        if (response.code() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+          throw new ApiException(MessageFormat.format("Service {0} is already in the state {1}", serviceName, serviceAction.getToken()));
+        } else {
+          throw new ApiException(response);
+        }
       }
-
-      logout(jSessionId);
+    } catch (IOException ioException) {
+      throw new ApiException(ioException);
     }
   }
 }
