@@ -33,5 +33,9 @@ import java.util.List;
  * @author brandonfontany-legall
  */
 public class Services implements Serializable {
-  public List<ServiceInformation> data;
+  private List<ServiceInformation> data;
+
+  public List<ServiceInformation> getData() {
+    return data;
+  }
 }

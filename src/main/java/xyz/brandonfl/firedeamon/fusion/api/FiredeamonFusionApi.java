@@ -86,7 +86,7 @@ public class FiredeamonFusionApi {
       Response response = client.newCall(request).execute();
 
       if (response.isSuccessful()) {
-        return new Gson().fromJson(response.body().string(), Services.class).data;
+        return new Gson().fromJson(response.body().string(), Services.class).getData();
       } else {
         throw new ApiException(response);
       }
