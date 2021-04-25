@@ -24,12 +24,14 @@
 
 package xyz.brandonfl.firedeamon.fusion.api.DTO;
 
+import java.io.Serializable;
+
 /**
  * Available service information. Note that not all data will be available at all time.
  *
  * @author brandonfontany-legall
  */
-public class ServiceInformation {
+public class ServiceInformation implements Serializable {
   private Service service;
   private ControlState controlState;
   private Runtime runtime;
@@ -49,7 +51,7 @@ public class ServiceInformation {
   /**
    * Main information for a service
    */
-  public static class Service {
+  public static class Service implements Serializable {
     private String name;
     private String displayName;
     private String description;
@@ -80,7 +82,7 @@ public class ServiceInformation {
   /**
    * Rights on a service
    */
-  public static class MissingRights {
+  public static class MissingRights implements Serializable {
     private boolean cantView;
     private boolean cantEdit;
     private boolean cantDelete;
@@ -101,7 +103,7 @@ public class ServiceInformation {
   /**
    * Actions that cannot be performed on a service
    */
-  public static class ImpossibleActions{
+  public static class ImpossibleActions implements Serializable {
     private boolean maynotDelete;
 
     public boolean isMaynotDelete() {
@@ -112,7 +114,7 @@ public class ServiceInformation {
   /**
    * Information on the status of the service
    */
-  public static class ServiceStatus {
+  public static class ServiceStatus implements Serializable {
     private int code;
     private boolean running;
     private String status;
@@ -143,7 +145,7 @@ public class ServiceInformation {
   /**
    * List of actions that can be done on the service
    */
-  public static class PerformableActions {
+  public static class PerformableActions implements Serializable {
     private boolean stoppable;
     private boolean restartable;
     private boolean startable;
@@ -164,7 +166,7 @@ public class ServiceInformation {
   /**
    * Main information on the management of the service (rights, status, possible actions)
    */
-  public static class ControlState {
+  public static class ControlState implements Serializable {
     private MissingRights missingRights;
     private ImpossibleActions impossibleActions;
     private ServiceStatus serviceStatus;
@@ -190,7 +192,7 @@ public class ServiceInformation {
   /**
    * Main system information of a service
    */
-  public static class Runtime {
+  public static class Runtime implements Serializable {
     private int memUseKB;
     private String processStatus;
     private int pid;

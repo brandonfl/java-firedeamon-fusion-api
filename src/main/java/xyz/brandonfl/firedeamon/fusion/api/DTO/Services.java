@@ -24,6 +24,7 @@
 
 package xyz.brandonfl.firedeamon.fusion.api.DTO;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -31,6 +32,6 @@ import java.util.List;
  *
  * @author brandonfontany-legall
  */
-public class Services {
+public class Services implements Serializable {
   public List<ServiceInformation> data;
 }
