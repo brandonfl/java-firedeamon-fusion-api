@@ -144,10 +144,6 @@ public class FiredeamonFusionApi {
           .build();
 
       Response response = client.newCall(request).execute();
-
-      System.out.println(response.code());
-      System.out.println(response.isSuccessful());
-
       if (!response.isSuccessful()) {
         if (response.code() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
           throw new ApiException(MessageFormat.format("Service {0} is already in the state {1}", serviceName, serviceAction.getToken()));
