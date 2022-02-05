@@ -1,0 +1,22 @@
+name: Deploy Javadoc
+on:
+  release:
+    types: [created]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Generate Javadoc
+        run: mvn javadoc:javadoc
+      - name: Deploy Javadoc
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          branch: gh-pages
+          clean: true
+          folder: target/site/apidocs
