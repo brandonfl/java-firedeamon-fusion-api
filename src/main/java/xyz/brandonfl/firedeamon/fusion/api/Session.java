@@ -27,11 +27,13 @@ package xyz.brandonfl.firedeamon.fusion.api;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import xyz.brandonfl.firedeamon.fusion.api.exception.ApiException;
 import xyz.brandonfl.firedeamon.fusion.api.exception.AuthenticationException;
 
 class Session implements AutoCloseable {
@@ -39,7 +41,7 @@ class Session implements AutoCloseable {
   private final String jSessionId;
   private final FiredeamonFusionApi firedeamonFusionApi;
 
-  protected Session(FiredeamonFusionApi firedeamonFusionApi) throws AuthenticationException {
+  protected Session(FiredeamonFusionApi firedeamonFusionApi) throws AuthenticationException, ApiException {
     this.firedeamonFusionApi = firedeamonFusionApi;
     jSessionId = this.login();
   }
@@ -48,7 +50,7 @@ class Session implements AutoCloseable {
     return jSessionId;
   }
 
-  private String login() throws AuthenticationException {
+  private String login() throws AuthenticationException, ApiException {
     try {
       JsonObject connect = new JsonObject();
 
@@ -69,6 +71,8 @@ class Session implements AutoCloseable {
       if (response.isSuccessful()) {
         List<String> cookieList = response.headers().values("Set-Cookie");
         return (cookieList.get(0).split(";"))[0];
+      } else if (HttpsURLConnection.HTTP_CLIENT_TIMEOUT == response.code() || response.code() >= 500) {
+        throw new ApiException(response);
       } else {
         throw new AuthenticationException();
       }
